@@ -1,0 +1,10 @@
+*.swp
+*.swo
+*.o
+*.a
+a.out
+prog
+.vscode
+#libft/*
+minishell
+.nfs*

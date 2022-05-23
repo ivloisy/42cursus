@@ -1,0 +1,68 @@
+version: '3'
+
+networks:
+  inception:
+
+services:
+  nginx:
+    container_name: nginx
+    env_file:
+      - ./.env
+    build:
+      context: ./requirements/nginx
+    image: nginx:ivloisy
+    volumes:
+      - wp_volume:/var/www/html/wordpress
+    networks:
+      - inception
+    depends_on :
+      - wordpress
+    ports:
+      - 443:443
+    restart: always
+
+  wordpress:
+    container_name: wordpress
+    env_file:
+      - ./.env
+    build:
+      context: ./requirements/wordpress
+    image: wordpress:ivloisy
+    volumes:
+      - wp_volume:/var/www/html/wordpress
+    networks:
+      - inception
+    depends_on :
+      - mariadb
+    ports:
+      - 9000:9000
+    restart: always
+
+  mariadb:
+    container_name: mariadb
+    env_file:
+      - ./.env
+    build:
+      context: ./requirements/mariadb
+    image: mariadb:ivloisy
+    volumes:
+      - db_volume:/var/lib/mysql
+    networks:
+      - inception
+    ports:
+      - 3306:3306
+    restart: always
+
+volumes:
+  wp_volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: volume
+      device: /home/ivloisy/data/wordpress
+  db_volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: volume
+      device: /home/ivloisy/data/mariadb
